@@ -1,0 +1,4 @@
+/* Estilos adicionales opcionales para la escena 3D */
+:host {
+  display: block;
+}
