@@ -13,7 +13,7 @@ import { OrbitControls } from 'three-stdlib';
 @Component({
   selector: 'app-escena3d',
   templateUrl: './escena3d.component.html',
-  styleUrls: ['./escena3d.component.css']
+  styleUrls: ['./escena3d.css']
 })
 export class Escena3dComponent implements AfterViewInit, OnDestroy {
 
