@@ -1,3 +1,5 @@
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
 import {
   AfterViewInit,
   Component,
@@ -8,12 +10,12 @@ import {
 } from '@angular/core';
 
 import * as THREE from 'three';
-import { OrbitControls } from 'three-stdlib';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 @Component({
   selector: 'app-escena3d',
   templateUrl: './escena3d.component.html',
-  styleUrls: ['./escena3d.css']
+  styleUrls: ['./escena3d.component.css']
 })
 export class Escena3dComponent implements AfterViewInit, OnDestroy {
 
@@ -24,7 +26,7 @@ export class Escena3dComponent implements AfterViewInit, OnDestroy {
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
-  private cube!: THREE.Mesh;
+  private cube: THREE.Object3D | null = null;
   private controls!: OrbitControls;
 
   // Animación
@@ -92,17 +94,34 @@ export class Escena3dComponent implements AfterViewInit, OnDestroy {
     directional.castShadow = true;
     this.scene.add(directional);
 
-    // 6. Cubo
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshStandardMaterial({
-      color: 0x22c55e,
-      roughness: 0.4,
-      metalness: 0.2
+// 6. Cargar modelo GLB
+const loader = new GLTFLoader();
+loader.load
+('/assets/modelos/gaming_desktop_pc_blend_file.glb',
+  (gltf) => {
+    const model = gltf.scene;
+    model.scale.set(1, 1, 1); // Cambiar tamaño si es muy grande o pequeño
+    model.position.y = 0;
+
+    model.traverse((child: any) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
     });
-    this.cube = new THREE.Mesh(geometry, material);
-    this.cube.castShadow = true;
-    this.cube.receiveShadow = true;
-    this.scene.add(this.cube);
+
+    this.scene.add(model);
+
+    // Guardamos referencia para animar
+    this.cube = model;
+  },
+  (progress) => {
+    console.log('Cargando modelo: ' + (progress.loaded / progress.total) * 100 + '%');
+  },
+  (error) => {
+    console.error('Error al cargar modelo', error);
+  }
+);
 
     // 7. Piso opcional
     const planeGeometry = new THREE.PlaneGeometry(6, 6);
@@ -160,12 +179,21 @@ export class Escena3dComponent implements AfterViewInit, OnDestroy {
     this.rotando = !this.rotando;
   }
 
-  cambiarColor(): void {
-    if (!this.cube) return;
+cambiarColor(): void {
+  if (!this.cube) return;
 
-    const material = this.cube.material as THREE.MeshStandardMaterial;
-    // Color aleatorio
-    const randomColor = new THREE.Color(Math.random(), Math.random(), Math.random());
-    material.color = randomColor;
-  }
+  const randomColor = new THREE.Color(Math.random(), Math.random(), Math.random());
+
+  this.cube.traverse((child) => {
+    if ((child as THREE.Mesh).isMesh) {
+      const mesh = child as THREE.Mesh;
+
+      if (Array.isArray(mesh.material)) {
+        mesh.material.forEach(m => (m as THREE.MeshStandardMaterial).color = randomColor);
+      } else {
+        (mesh.material as THREE.MeshStandardMaterial).color = randomColor;
+      }
+    }
+  });
+}
 }
