@@ -1,0 +1,27 @@
+<div class="container mt-4">
+  <h1>Nuestros Productos</h1>
+  
+  <div *ngIf="productos.length === 0" class="text-center py-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2">Cargando productos...</p>
+  </div>
+
+  <div class="row">
+    <div *ngFor="let producto of productos" class="col-md-4 mb-4">
+      <div class="card h-100">
+        <img [src]="producto.imagen || 'https://picsum.photos/300/200'" 
+             class="card-img-top" 
+             [alt]="producto.nombre"
+             style="height: 200px; object-fit: cover;">
+        <div class="card-body">
+          <h5 class="card-title">{{ producto.nombre }}</h5>
+          <p class="card-text">{{ producto.categoria }}</p>
+          <p class="h4 text-primary">${{ producto.precio }}</p>
+          <button class="btn btn-primary">Agregar al Carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

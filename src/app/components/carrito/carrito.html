@@ -1,0 +1,161 @@
+<div class="container py-4">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="section-title mb-4">
+        <i class="bi bi-cart me-2"></i>Carrito de Compras
+      </h1>
+      
+      <!-- Mensajes -->
+      <div *ngIf="mensaje" 
+           class="alert" 
+           [class.alert-success]="tipoMensaje === 'success'" 
+           [class.alert-danger]="tipoMensaje === 'error'">
+        <i class="bi" 
+           [class.bi-check-circle]="tipoMensaje === 'success'" 
+           [class.bi-exclamation-circle]="tipoMensaje === 'error'"
+           class="me-2"></i>
+        {{ mensaje }}
+      </div>
+
+      <!-- Carrito vacío -->
+      <div *ngIf="!cargando && items.length === 0" class="text-center py-5">
+        <div class="empty-cart-icon mb-4">
+          <i class="bi bi-cart-x display-1 text-muted"></i>
+        </div>
+        <h3 class="text-muted mb-3">Tu carrito está vacío</h3>
+        <p class="text-muted mb-4">¡Descubre nuestros productos y añade algunos a tu carrito!</p>
+        <a routerLink="/productos" class="btn btn-primary-custom btn-lg">
+          <i class="bi bi-arrow-left me-2"></i>Continuar Comprando
+        </a>
+      </div>
+
+      <!-- Carrito con items -->
+      <div *ngIf="items.length > 0" class="row">
+        <div class="col-lg-8">
+          <div class="card welcome-card">
+            <div class="card-header bg-transparent border-bottom-0">
+              <h5 class="mb-0">
+                <i class="bi bi-list me-2"></i>Productos en el Carrito
+              </h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="border-0">Producto</th>
+                      <th class="border-0 text-center">Precio</th>
+                      <th class="border-0 text-center">Cantidad</th>
+                      <th class="border-0 text-center">Subtotal</th>
+                      <th class="border-0 text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of items" class="align-middle">
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img [src]="item.imagen || 'https://picsum.photos/seed/placeholder/100/100'" 
+                               [alt]="item.nombre" 
+                               class="rounded me-3 object-fit-cover" 
+                               style="width: 60px; height: 60px;">
+                          <div>
+                            <h6 class="mb-1 product-name">{{ item.nombre }}</h6>
+                            <small class="text-muted">{{ item.categoria }}</small>
+                            <div class="small text-muted">
+                              <i class="bi bi-box me-1"></i>Stock: {{ item.stock }}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="text-center">
+                        <span class="product-price">${{ item.precio_unit | number:'1.2-2' }}</span>
+                      </td>
+                      <td class="text-center">
+                        <div class="d-flex align-items-center justify-content-center">
+                          <div class="input-group input-group-sm" style="width: 120px;">
+                            <input type="number" 
+                                   [(ngModel)]="item.cantidad"
+                                   (change)="actualizarCantidad(item, item.cantidad)"
+                                   min="1" 
+                                   [max]="item.stock"
+                                   class="form-control text-center">
+                          </div>
+                        </div>
+                      </td>
+                      <td class="text-center">
+                        <span class="product-price fw-bold">
+                          ${{ (item.precio_unit * item.cantidad) | number:'1.2-2' }}
+                        </span>
+                      </td>
+                      <td class="text-center">
+                        <button type="button" 
+                                class="btn btn-sm btn-outline-danger" 
+                                (click)="eliminarItem(item.id)"
+                                title="Eliminar producto">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Resumen -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+          <div class="card welcome-card sticky-top" style="top: 100px;">
+            <div class="card-header bg-transparent border-bottom-0">
+              <h5 class="mb-0">
+                <i class="bi bi-receipt me-2"></i>Resumen del Pedido
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Subtotal:</span>
+                <span class="fw-bold fs-5">${{ subtotal | number:'1.2-2' }}</span>
+              </div>
+              
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Impuestos (16%):</span>
+                <span class="fw-bold">${{ impuestos | number:'1.2-2' }}</span>
+              </div>
+              
+              <hr>
+              
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="h5 mb-0">Total:</span>
+                <span class="h4 text-accent fw-bold">${{ total | number:'1.2-2' }}</span>
+              </div>
+              
+              <div class="d-grid gap-2">
+                <a routerLink="/checkout" class="btn btn-primary-custom btn-lg">
+                  <i class="bi bi-credit-card me-2"></i>Continuar a Checkout
+                </a>
+                
+                <a routerLink="/productos" class="btn btn-outline-secondary">
+                  <i class="bi bi-arrow-left me-2"></i>Seguir Comprando
+                </a>
+              </div>
+              
+              <div class="mt-3 text-center">
+                <small class="text-muted">
+                  <i class="bi bi-lock me-1"></i>Compra 100% segura
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="cargando" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2 text-muted">Cargando carrito...</p>
+      </div>
+    </div>
+  </div>
+</div>
