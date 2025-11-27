@@ -1,0 +1,85 @@
+.navbar {
+  background: rgba(15, 20, 25, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 0;
+}
+
+[data-bs-theme="light"] .navbar {
+  background: rgba(248, 250, 252, 0.95) !important;
+}
+
+.navbar-brand {
+  color: var(--accent-color) !important;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  color: var(--fg-color) !important;
+  font-weight: 500;
+  transition: color 0.3s;
+  padding: 0.5rem 1rem !important;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--accent-color) !important;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-color), #19c2c6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Badge del carrito */
+.badge {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.4rem;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dropdown */
+.dropdown-menu {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.dropdown-item {
+  color: var(--fg-color);
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-item:hover {
+  background: var(--accent-color);
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar-nav {
+    text-align: center;
+    margin: 1rem 0;
+  }
+  
+  .nav-link {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .d-flex.align-items-center {
+    justify-content: center;
+    margin-top: 1rem;
+  }
+}

@@ -199,7 +199,58 @@ app.get('/', (req, res) => {
     ]
   });
 });
-
+// POST crear orden (al final de server.js, antes de app.listen)
+app.post('/api/ordenes', (req, res) => {
+  const { nombre, email, telefono, direccion, ciudad, notas, items, subtotal, impuestos, total } = req.body;
+  
+  // Generar código único para el pedido
+  const codigo = 'PED' + Math.random().toString(36).substr(2, 8).toUpperCase();
+  
+  // Insertar pedido
+  connection.query(`
+    INSERT INTO pedidos (session_id, codigo, nombre, email, telefono, direccion, ciudad, notas, subtotal, impuestos, total) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `, ['angular_session', codigo, nombre, email, telefono, direccion, ciudad, notas, subtotal, impuestos, total], 
+  (error, results) => {
+    if (error) {
+      console.error('Error creando pedido:', error);
+      return res.status(500).json({ error: 'Error creando pedido' });
+    }
+    
+    const pedidoId = results.insertId;
+    
+    // Insertar items del pedido
+    const itemsPromises = items.map(item => {
+      return new Promise((resolve, reject) => {
+        connection.query(`
+          INSERT INTO pedido_items (pedido_id, producto_id, titulo, titulo_snapshot, precio_unit, cantidad, subtotal) 
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `, [pedidoId, item.producto_id, item.nombre, item.nombre, item.precio_unit, item.cantidad, item.precio_unit * item.cantidad], 
+        (error) => {
+          if (error) reject(error);
+          else resolve();
+        });
+      });
+    });
+    
+    Promise.all(itemsPromises)
+      .then(() => {
+        // Limpiar carrito después de crear pedido
+        connection.query('DELETE FROM carrito_items WHERE session_id = ?', ['angular_session'], () => {
+          res.json({ 
+            success: true, 
+            pedidoId: pedidoId,
+            codigo: codigo,
+            message: 'Pedido creado exitosamente' 
+          });
+        });
+      })
+      .catch(error => {
+        console.error('Error insertando items:', error);
+        res.status(500).json({ error: 'Error creando items del pedido' });
+      });
+  });
+});
 app.listen(PORT, () => {
   console.log(`✅ Backend en http://localhost:${PORT}`);
 });

@@ -1,0 +1,139 @@
+.checkout-container {
+  min-height: 80vh;
+  padding-top: 2rem;
+}
+
+.checkout-title {
+  color: var(--fg-color);
+  font-weight: 700;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+}
+
+.mensaje {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.mensaje-success {
+  background: rgba(72, 187, 120, 0.1);
+  border: 1px solid #48bb78;
+  color: #48bb78;
+}
+
+.mensaje-error {
+  background: rgba(229, 62, 62, 0.1);
+  border: 1px solid #e53e3e;
+  color: #e53e3e;
+}
+
+.carrito-vacio {
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 3rem 2rem;
+}
+
+.empty-cart-icon {
+  color: var(--muted-color);
+}
+
+.welcome-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  padding: 1.5rem 1.5rem 0;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.form-label {
+  color: var(--fg-color);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--fg-color);
+  padding: 0.75rem 1rem;
+}
+
+.form-control:focus {
+  background: var(--bg-color);
+  border-color: var(--accent-color);
+  color: var(--fg-color);
+  box-shadow: 0 0 0 0.2rem rgba(0, 198, 224, 0.25);
+}
+
+.btn-primary-custom {
+  background: linear-gradient(135deg, var(--accent-color), #19c2c6);
+  color: #000;
+  border: none;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover:not(:disabled) {
+  background: linear-gradient(135deg, #19c2c6, var(--accent-color));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 198, 224, 0.3);
+}
+
+.btn-primary-custom:disabled {
+  background: var(--muted-color);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-outline-secondary {
+  border: 1px solid var(--border-color);
+  color: var(--fg-color);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--border-color);
+  color: var(--fg-color);
+}
+
+.sticky-top {
+  position: sticky;
+  top: 100px;
+}
+
+.text-accent {
+  color: var(--accent-color) !important;
+}
+
+.product-name {
+  color: var(--fg-color);
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .checkout-title {
+    font-size: 2rem;
+    text-align: center;
+  }
+  
+  .sticky-top {
+    position: static;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
