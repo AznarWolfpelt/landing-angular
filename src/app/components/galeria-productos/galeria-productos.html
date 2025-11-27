@@ -1,26 +1,32 @@
-<div class="container mt-4">
-  <h1>Nuestros Productos</h1>
-  
-  <div *ngIf="productos.length === 0" class="text-center py-5">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Cargando...</span>
-    </div>
-    <p class="mt-2">Cargando productos...</p>
+<div class="galeria-container">
+  <div class="galeria-header">
+    <h1>Descubre Nuestros Productos</h1>
+    <p class="text-muted">Encuentra lo que necesitas con la mejor calidad</p>
   </div>
 
-  <div class="row">
-    <div *ngFor="let producto of productos" class="col-md-4 mb-4">
-      <div class="card h-100">
+  <div *ngIf="productos.length === 0" class="cargando">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3">Cargando productos...</p>
+  </div>
+
+  <div class="galeria-grid">
+    <div *ngFor="let producto of productos" class="producto-card">
+      <div class="producto-imagen">
         <img [src]="producto.imagen || 'https://picsum.photos/300/200'" 
-             class="card-img-top" 
              [alt]="producto.nombre"
-             style="height: 200px; object-fit: cover;">
-        <div class="card-body">
-          <h5 class="card-title">{{ producto.nombre }}</h5>
-          <p class="card-text">{{ producto.categoria }}</p>
-          <p class="h4 text-primary">${{ producto.precio }}</p>
-          <button class="btn btn-primary">Agregar al Carrito</button>
-        </div>
+             loading="lazy">
+      </div>
+      
+      <div class="producto-info">
+        <div class="producto-categoria">{{ producto.categoria || 'General' }}</div>
+        <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+        <div class="producto-precio">${{ producto.precio }}</div>
+        <!-- En la tarjeta de producto, cambiar el botón: -->
+        <button class="btn-agregar" (click)="verDetalle(producto.id)">
+          Ver Detalle
+        </button>
       </div>
     </div>
   </div>

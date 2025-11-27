@@ -8,5 +8,17 @@ export const routes: Routes = [
   { 
     path: 'productos', 
     loadComponent: () => import('./components/galeria-productos/galeria-productos').then(m => m.GaleriaProductos) 
+  },
+  { 
+    path: 'productos/:id', 
+    loadComponent: () => import('./components/detalle-producto/detalle-producto').then(m => m.DetalleProducto) 
+  },
+  { 
+    path: 'carrito', 
+    loadComponent: () => import('./components/carrito/carrito').then(m => m.Carrito) 
+  },
+  { 
+    path: 'checkout', 
+    loadComponent: () => import('./components/checkout/checkout').then(m => m.Checkout) 
   }
 ];

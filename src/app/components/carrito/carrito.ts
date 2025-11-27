@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router'; // ← Ya lo tienes
 import { CartService, CartItem } from '../../services/cart.service';
 
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule], // ← Verificar que esté
   templateUrl: './carrito.html',
   styleUrls: ['./carrito.css']
 })

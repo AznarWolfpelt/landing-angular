@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface CartItem {
   id: number;
@@ -19,18 +20,28 @@ export interface CartItem {
 })
 export class CartService {
   private apiUrl = 'http://localhost:3000/api';
-  private sessionId = this.generateSessionId();
+  private sessionId: string = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) {
+    this.sessionId = this.generateSessionId();
+  }
 
   private generateSessionId(): string {
-    // Generar un session ID único para el carrito
-    let sessionId = localStorage.getItem('cart_session_id');
-    if (!sessionId) {
-      sessionId = 'angular_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('cart_session_id', sessionId);
+    // Solo usar localStorage en el navegador
+    if (isPlatformBrowser(this.platformId)) {
+      let sessionId = localStorage.getItem('cart_session_id');
+      if (!sessionId) {
+        sessionId = 'angular_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('cart_session_id', sessionId);
+      }
+      return sessionId;
+    } else {
+      // En servidor, usar un ID temporal
+      return 'server_temp_session';
     }
-    return sessionId;
   }
 
   getCartItems(): Observable<CartItem[]> {
