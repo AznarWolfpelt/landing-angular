@@ -88,17 +88,18 @@ export class Checkout implements OnInit {
       total: this.total
     };
 
-    // TODO: Cambiar por tu endpoint real cuando lo tengas
     this.http.post('http://localhost:3000/api/ordenes', pedidoData).subscribe({
       next: (response: any) => {
         this.procesando = false;
-        this.mostrarMensaje('¡Pedido confirmado exitosamente!', 'success');
         
-        // Limpiar carrito y redirigir después de 2 segundos
-        setTimeout(() => {
-          this.limpiarCarrito();
-          this.router.navigate(['/']);
-        }, 2000);
+        // Redirigir a página de confirmación con datos
+        this.router.navigate(['/confirmacion-pedido'], {
+          queryParams: {
+            codigo: response.codigo,
+            total: this.total.toFixed(2),
+            email: this.formData.email
+          }
+        });
       },
       error: (error) => {
         console.error('Error confirmando pedido:', error);

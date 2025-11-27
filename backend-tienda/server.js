@@ -199,7 +199,6 @@ app.get('/', (req, res) => {
     ]
   });
 });
-// POST crear orden (al final de server.js, antes de app.listen)
 app.post('/api/ordenes', (req, res) => {
   const { nombre, email, telefono, direccion, ciudad, notas, items, subtotal, impuestos, total } = req.body;
   
@@ -241,6 +240,7 @@ app.post('/api/ordenes', (req, res) => {
             success: true, 
             pedidoId: pedidoId,
             codigo: codigo,
+            total: total,  // ← SOLO AGREGAR ESTA LÍNEA
             message: 'Pedido creado exitosamente' 
           });
         });
@@ -251,6 +251,7 @@ app.post('/api/ordenes', (req, res) => {
       });
   });
 });
+
 app.listen(PORT, () => {
   console.log(`✅ Backend en http://localhost:${PORT}`);
 });

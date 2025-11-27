@@ -20,5 +20,9 @@ export const routes: Routes = [
   { 
     path: 'checkout', 
     loadComponent: () => import('./components/checkout/checkout').then(m => m.Checkout) 
+  },
+  { 
+    path: 'confirmacion-pedido', 
+    loadComponent: () => import('./components/confirmacion-pedido/confirmacion-pedido').then(m => m.ConfirmacionPedido) 
   }
 ];

@@ -1,0 +1,12 @@
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+node -v
+npm -v
+ng version
+
+ng serve -o
+
+cd backend-tienda
+node server.js
+
+npm run start 
