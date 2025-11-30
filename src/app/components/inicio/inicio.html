@@ -1,0 +1,96 @@
+<!-- Contenido principal con padding-top para la navbar fixed -->
+<main class="container mt-5 pt-4">
+
+  <!-- Hero Section (puedes adaptar tu carrusel después) -->
+  <div class="hero-section text-center mb-5 py-5 rounded-3">
+    <h1 class="display-4 fw-bold mb-4">Bienvenido a Nuestra Tienda</h1>
+    <p class="lead mb-4">Descubre los mejores productos tecnológicos al mejor precio</p>
+    <a [routerLink]="['/productos']" class="btn btn-primary btn-lg px-4">
+      Explorar Productos
+    </a>
+  </div>
+
+  <!-- Tarjeta de Bienvenida -->
+  <div class="welcome-card p-4 mb-5">
+    <div class="row align-items-center">
+      <div class="col-lg-8 mb-3 mb-lg-0">
+        <h2 class="h4 mb-2">¡Bienvenido a nuestra tienda!</h2>
+        <p class="mb-0 text-muted">
+          Explora nuestra amplia selección de productos tecnológicos
+        </p>
+      </div>
+      <div class="col-lg-4">
+        <div class="row g-3 text-center">
+          <div class="col-4">
+            <div class="stats-card p-2">
+              <div class="stat-value h5 mb-1">{{ productosDestacados.length }}</div>
+              <div class="stat-label small text-muted">Productos</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="stats-card p-2">
+              <div class="stat-value h5 mb-1">15%</div>
+              <div class="stat-label small text-muted">Descuento</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="stats-card p-2">
+              <div class="stat-value h5 mb-1">4</div>
+              <div class="stat-label small text-muted">Categorías</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Productos Destacados -->
+  <div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="h3 mb-0">Productos Destacados</h2>
+      <a [routerLink]="['/productos']" class="btn btn-outline-primary">Ver Todos</a>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="cargando" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Grid de Productos -->
+    <div class="row g-4" *ngIf="!cargando">
+      <div class="col-md-6 col-lg-4" *ngFor="let producto of productosDestacados">
+        <div class="product-card h-100">
+          <div class="product-image" 
+               [style.backgroundImage]="'url(' + producto.imagen + ')'">
+          </div>
+          <div class="p-3 d-flex flex-column">
+            <h5 class="product-name">{{ producto.nombre }}</h5>
+            <p class="text-muted small mb-2">{{ producto.categoria }}</p>
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              <span class="product-price">${{ producto.precio }}</span>
+              <a [routerLink]="['/productos', producto.id]" 
+                 class="btn btn-primary btn-sm">
+                Ver Detalles
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banner Promocional -->
+  <div class="promo-banner text-center p-5 rounded-3 mb-4">
+    <h3 class="h2 mb-3 fw-bold">🎉 Oferta Especial</h3>
+    <p class="mb-4 fs-5">Descuento del <strong>15%</strong> en tu primera compra</p>
+    <div class="promo-code mb-4">
+      <span class="fs-3 fw-bold">BIENVENIDO15</span>
+    </div>
+    <a [routerLink]="['/productos']" class="btn btn-primary btn-lg px-4 py-3 fw-bold">
+      Ver Todos los Productos
+    </a>
+  </div>
+
+</main>

@@ -20,7 +20,7 @@ export interface CartItem {
 })
 export class CartService {
   private apiUrl = 'http://localhost:3000/api';
-  private sessionId: string = '';
+  public sessionId: string = ''; // ← CAMBIAR A PUBLIC
 
   constructor(
     private http: HttpClient,
@@ -65,6 +65,12 @@ export class CartService {
 
   removeFromCart(itemId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/carrito/eliminar/${itemId}`, {
+      body: { session_id: this.sessionId }
+    });
+  }
+
+  clearCart(): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/carrito/limpiar`, {
       body: { session_id: this.sessionId }
     });
   }

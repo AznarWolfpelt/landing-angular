@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CartService } from '../../services/cart.service'; // Ajusta la ruta según tu estructura
 
 @Component({
   selector: 'app-confirmacion-pedido',
@@ -15,7 +16,8 @@ export class ConfirmacionPedido implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cartService: CartService // ← Agregar este servicio
   ) {}
 
   ngOnInit() {
@@ -29,12 +31,24 @@ export class ConfirmacionPedido implements OnInit {
           fecha: new Date().toLocaleString('es-ES')
         };
         this.cargando = false;
+        
+        // ✅ LIMPIAR CARRITO DESPUÉS DE CONFIRMAR
+        this.limpiarCarrito();
       } else {
         // Si no hay datos, redirigir al inicio
         this.router.navigate(['/']);
       }
     });
   }
+
+  // ✅ NUEVO MÉTODO PARA LIMPIAR CARRITO
+private limpiarCarrito() {
+  console.log('🔍 CONFIRMACION - Limpiando carrito...');
+  this.cartService.clearCart().subscribe({
+    next: (response) => console.log('✅ Carrito limpiado:', response),
+    error: (error) => console.error('❌ Error limpiando carrito:', error)
+  });
+}
 
   // También podemos recibir datos por estado (si vienen del checkout)
   recibirDatosDesdeCheckout(datos: any) {
@@ -45,5 +59,8 @@ export class ConfirmacionPedido implements OnInit {
       fecha: new Date().toLocaleString('es-ES')
     };
     this.cargando = false;
+    
+    // ✅ LIMPIAR CARRITO TAMBIÉN AQUÍ
+    this.limpiarCarrito();
   }
 }

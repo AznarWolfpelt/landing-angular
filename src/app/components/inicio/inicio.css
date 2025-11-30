@@ -1,0 +1,63 @@
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.welcome-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.stats-card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.stat-value {
+  color: #495057;
+  font-weight: 600;
+}
+
+.product-card {
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.product-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.product-name {
+  color: #495057;
+  font-weight: 600;
+}
+
+.product-price {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.promo-banner {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+}
+
+.promo-code {
+  background: rgba(255,255,255,0.2);
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: inline-block;
+}

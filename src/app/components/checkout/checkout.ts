@@ -67,48 +67,60 @@ export class Checkout implements OnInit {
     this.total = this.subtotal + this.impuestos;
   }
 
-  confirmarPedido() {
-    if (this.items.length === 0) {
-      this.mostrarMensaje('Tu carrito está vacío', 'error');
-      return;
-    }
-
-    if (!this.validarFormulario()) {
-      this.mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
-      return;
-    }
-
-    this.procesando = true;
-
-    const pedidoData = {
-      ...this.formData,
-      items: this.items,
-      subtotal: this.subtotal,
-      impuestos: this.impuestos,
-      total: this.total
-    };
-
-    this.http.post('http://localhost:3000/api/ordenes', pedidoData).subscribe({
-      next: (response: any) => {
-        this.procesando = false;
-        
-        // Redirigir a página de confirmación con datos
-        this.router.navigate(['/confirmacion-pedido'], {
-          queryParams: {
-            codigo: response.codigo,
-            total: this.total.toFixed(2),
-            email: this.formData.email
-          }
-        });
-      },
-      error: (error) => {
-        console.error('Error confirmando pedido:', error);
-        this.procesando = false;
-        this.mostrarMensaje('Error al procesar el pedido', 'error');
-      }
-    });
+// En checkout.ts, modifica el método confirmarPedido()
+confirmarPedido() {
+  console.log('🔍 CHECKOUT - Items en carrito:', this.items);
+  console.log('🔍 CHECKOUT - Session ID:', this.cartService.sessionId);
+  if (this.items.length === 0) {
+    this.mostrarMensaje('Tu carrito está vacío', 'error');
+    return;
   }
 
+  if (!this.validarFormulario()) {
+    this.mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
+    return;
+  }
+
+  this.procesando = true;
+
+  // ✅ USAR EL SESSION_ID CORRECTO (sin el "as any")
+  const sessionId = this.cartService.sessionId;
+  console.log('🔍 CHECKOUT - Session ID a enviar:', sessionId);
+
+  const pedidoData = {
+    session_id: sessionId,  // ← ESTE ES EL SESSION_ID REAL
+    ...this.formData,
+    items: this.items.map(item => ({
+      producto_id: item.producto_id,
+      nombre: item.nombre,
+      precio_unit: item.precio_unit,
+      cantidad: item.cantidad
+    })),
+    subtotal: this.subtotal,
+    impuestos: this.impuestos,
+    total: this.total
+  };
+
+  this.http.post('http://localhost:3000/api/ordenes', pedidoData).subscribe({
+    next: (response: any) => {
+      this.procesando = false;
+      
+      // ✅ REDIRIGIR CON LOS DATOS CORRECTOS
+      this.router.navigate(['/confirmacion-pedido'], {
+        queryParams: {
+          codigo: response.codigo,
+          total: response.total,
+          email: this.formData.email
+        }
+      });
+    },
+    error: (error) => {
+      console.error('Error confirmando pedido:', error);
+      this.procesando = false;
+      this.mostrarMensaje('Error al procesar el pedido: ' + (error.error?.error || 'Error desconocido'), 'error');
+    }
+  });
+}
   validarFormulario(): boolean {
     return !!(this.formData.nombre && 
               this.formData.email && 
