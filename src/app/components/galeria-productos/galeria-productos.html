@@ -1,33 +1,160 @@
 <div class="galeria-container">
-  <div class="galeria-header">
-    <h1>Descubre Nuestros Productos</h1>
-    <p class="text-muted">Encuentra lo que necesitas con la mejor calidad</p>
-  </div>
-
-  <div *ngIf="productos.length === 0" class="cargando">
-    <div class="spinner-border text-success" role="status">
-      <span class="visually-hidden">Cargando...</span>
-    </div>
-    <p class="mt-3">Cargando productos...</p>
-  </div>
-
-  <div class="galeria-grid">
-    <div *ngFor="let producto of productos" class="producto-card">
-      <div class="producto-imagen">
-        <img [src]="producto.imagen || 'https://picsum.photos/300/200'" 
-             [alt]="producto.nombre"
-             loading="lazy">
+  <div class="container mt-4">
+    
+    <!-- Encabezado -->
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h1 class="section-title mb-3">Nuestra Tienda</h1>
+        <p class="text-muted">Descubre nuestra selección de productos gaming y tecnología</p>
       </div>
-      
-      <div class="producto-info">
-        <div class="producto-categoria">{{ producto.categoria || 'General' }}</div>
-        <h3 class="producto-nombre">{{ producto.nombre }}</h3>
-        <div class="producto-precio">${{ producto.precio }}</div>
-        <!-- En la tarjeta de producto, cambiar el botón: -->
-        <button class="btn-agregar" (click)="verDetalle(producto.id)">
-          Ver Detalle
+      <div class="col-md-4 text-md-end">
+        <a [routerLink]="['/']" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left me-2"></i>Volver al Inicio
+        </a>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card welcome-card mb-4">
+      <div class="card-body">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-6">
+            <label class="form-label">Buscar productos</label>
+            <input type="text" [(ngModel)]="busqueda" 
+                   (input)="aplicarFiltros()"
+                   class="form-control" 
+                   placeholder="Buscar por nombre o descripción...">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Categoría</label>
+            <select [(ngModel)]="categoria" (change)="aplicarFiltros()" class="form-select">
+              <option value="">Todas las categorías</option>
+              <option *ngFor="let cat of categorias" [value]="cat">
+                {{ cat }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button (click)="aplicarFiltros()" class="btn btn-primary-custom w-100">
+              <i class="bi bi-funnel me-2"></i>Filtrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultados y limpiar filtros -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <p class="text-muted mb-0">
+            {{ productosFiltrados.length }} producto{{ productosFiltrados.length !== 1 ? 's' : '' }} encontrado{{ productosFiltrados.length !== 1 ? 's' : '' }}
+          </p>
+          <button *ngIf="hayFiltros" (click)="limpiarFiltros()" 
+                  class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="cargando" class="text-center py-5">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="mt-3">Cargando productos...</p>
+    </div>
+
+    <!-- Sin resultados -->
+    <div *ngIf="!cargando && productosFiltrados.length === 0" class="card welcome-card text-center py-5">
+      <div class="card-body">
+        <i class="bi bi-search display-1 text-muted mb-3"></i>
+        <h3 class="text-muted">No se encontraron productos</h3>
+        <p class="text-muted">Intenta con otros términos de búsqueda o categorías</p>
+        <button (click)="limpiarFiltros()" class="btn btn-primary-custom">
+          Ver todos los productos
         </button>
       </div>
     </div>
+
+    <!-- Grid de Productos -->
+    <div *ngIf="!cargando && productosFiltrados.length > 0" class="row g-4 mb-5">
+      <div *ngFor="let producto of productosPagina" class="col-md-6 col-lg-4">
+        <div class="product-card position-relative" [class.opacity-50]="producto.stock <= 0">
+          
+          <!-- Etiqueta AGOTADO -->
+          <div *ngIf="producto.stock <= 0" 
+               class="position-absolute top-0 start-0 end-0 text-center bg-danger text-white py-1">
+            <small>AGOTADO</small>
+          </div>
+          
+          <div class="product-image" 
+               [style.backgroundImage]="'url(' + (producto.imagen || 'https://picsum.photos/300/200') + ')'">
+          </div>
+          
+          <div class="p-3">
+            <h5 class="product-name">{{ producto.nombre }}</h5>
+            <p class="text-muted small mb-2">
+              {{ (producto.descripcion || '').substring(0, 110) }}{{ (producto.descripcion || '').length > 110 ? '...' : '' }}
+            </p>
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="product-price">${{ producto.precio }}</span>
+              <span class="badge bg-secondary">{{ producto.categoria }}</span>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="d-flex gap-2">
+              <button (click)="verDetalle(producto.id)" 
+                      class="btn btn-outline-primary btn-sm flex-grow-1">
+                <i class="bi bi-eye me-1"></i>Ver Detalle
+              </button>
+              
+              <button (click)="agregarAlCarrito(producto)" 
+                      class="btn btn-primary-custom btn-sm"
+                      [disabled]="producto.stock <= 0">
+                <i class="bi bi-cart-plus me-1"></i>Agregar
+              </button>
+            </div>
+            
+            <!-- Alerta de stock bajo -->
+            <small *ngIf="producto.stock > 0 && producto.stock < 5" 
+                   class="text-warning d-block mt-2">
+              <i class="bi bi-exclamation-triangle me-1"></i>
+              {{ mostrarStock(producto) }}
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <nav *ngIf="totalPaginas > 1" aria-label="Paginación de productos">
+      <ul class="pagination justify-content-center">
+        <!-- Botón anterior -->
+        <li class="page-item" [class.disabled]="paginaActual === 1">
+          <a class="page-link" (click)="cambiarPagina(paginaActual - 1)" href="javascript:void(0)">
+            <i class="bi bi-chevron-left"></i>
+          </a>
+        </li>
+
+        <!-- Números de página -->
+        <li *ngFor="let pagina of [].constructor(totalPaginas); let i = index" 
+            class="page-item" [class.active]="paginaActual === i + 1">
+          <a class="page-link" (click)="cambiarPagina(i + 1)" href="javascript:void(0)">
+            {{ i + 1 }}
+          </a>
+        </li>
+
+        <!-- Botón siguiente -->
+        <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+          <a class="page-link" (click)="cambiarPagina(paginaActual + 1)" href="javascript:void(0)">
+            <i class="bi bi-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
   </div>
 </div>

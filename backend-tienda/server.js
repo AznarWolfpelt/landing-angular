@@ -27,7 +27,8 @@ connection.connect((err) => {
 // GET productos
 app.get('/api/productos', (req, res) => {
   connection.query(`
-    SELECT id, titulo as nombre, precio, imagen_url as imagen, categoria, stock, descripcion
+    SELECT id, titulo as nombre, precio, imagen_url as imagen, 
+           categoria, stock, descripcion, modelo_3d_url
     FROM productos 
     WHERE activo = 1
   `, (error, results) => {
@@ -43,7 +44,8 @@ app.get('/api/productos', (req, res) => {
 app.get('/api/productos/:id', (req, res) => {
   const productId = req.params.id;
   connection.query(`
-    SELECT id, titulo as nombre, precio, imagen_url as imagen, categoria, stock, descripcion
+    SELECT id, titulo as nombre, precio, imagen_url as imagen, 
+           categoria, stock, descripcion, modelo_3d_url
     FROM productos 
     WHERE id = ? AND activo = 1
   `, [productId], (error, results) => {

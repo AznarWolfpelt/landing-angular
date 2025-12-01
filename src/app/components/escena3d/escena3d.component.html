@@ -1,41 +1,48 @@
-<section style="padding: 1.5rem 1rem;">
-  <h2 style="text-align:center; margin-bottom: 1rem;">
-    Escena 3D con Three.js (Cubo interactivo)
-  </h2>
+<section class="escena-3d-container">
+  <!-- Controles superiores -->
+  <div class="controles-superiores">
+    <button
+      (click)="toggleRotation()"
+      class="btn-control"
+      [class.btn-activo]="rotando"
+    >
+      <i class="bi" [class.bi-pause]="rotando" [class.bi-play]="!rotando"></i>
+      {{ rotando ? 'Pausar Rotación' : 'Iniciar Rotación' }}
+    </button>
 
-  <div style="display:flex; flex-direction:column; gap: 1rem; align-items:center;">
-    <div
-      #rendererContainer
-      style="
-        width: 100%;
-        max-width: 700px;
-        height: 400px;
-        border-radius: 12px;
-        border: 1px solid #1f2937;
-        overflow: hidden;
-        background: radial-gradient(circle at top, #1f2937, #020617 70%);
-      "
-    ></div>
+    <button
+      (click)="cambiarColor()"
+      class="btn-control btn-color"
+    >
+      <i class="bi bi-palette"></i>
+      Cambiar Color
+    </button>
 
-    <div style="display:flex; gap:0.75rem; flex-wrap:wrap; justify-content:center;">
-      <button
-        (click)="toggleRotation()"
-        style="padding: 0.4rem 0.9rem; border-radius: 999px; border:none; cursor:pointer; background:#22c55e; color:#022c22; font-weight:600;"
-      >
-        {{ rotando ? 'Detener rotación' : 'Iniciar rotación' }}
-      </button>
+    <!-- ✅ NUEVO: Botón para resetear vista -->
+    <button
+      (click)="resetearVista()"
+      class="btn-control btn-reset"
+    >
+      <i class="bi bi-arrow-clockwise"></i>
+      Resetear Vista
+    </button>
+  </div>
 
-      <button
-        (click)="cambiarColor()"
-        style="padding: 0.4rem 0.9rem; border-radius: 999px; border:none; cursor:pointer; background:#3b82f6; color:#e5e7eb; font-weight:600;"
-      >
-        Cambiar color del cubo
-      </button>
-    </div>
+  <!-- Contenedor del renderer -->
+  <div
+    #rendererContainer
+    class="renderer-container"
+  ></div>
 
-    <p style="font-size:0.85rem; opacity:0.8; text-align:center; max-width:620px;">
-      Tip: arrastra con el mouse sobre el área 3D para rotar la cámara (OrbitControls). Usa los botones para
-      controlar la animación y el color del cubo.
+  <!-- Información inferior -->
+  <div class="info-inferior">
+    <p class="instrucciones">
+      <i class="bi bi-arrows-move"></i>
+      Arrastra para rotar • 
+      <i class="bi bi-mouse"></i>
+      Rueda para zoom •
+      <i class="bi bi-arrow-clockwise"></i>
+      Reset para vista inicial
     </p>
   </div>
 </section>

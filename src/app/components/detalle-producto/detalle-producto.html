@@ -1,25 +1,31 @@
 <div class="detalle-container">
-  <div *ngIf="cargando" class="cargando">
-    <div class="spinner-border text-success" role="status">
-      <span class="visually-hidden">Cargando...</span>
-    </div>
-    <p class="mt-3">Cargando producto...</p>
-  </div>
-
+  <!-- ... código anterior ... -->
+  
   <div *ngIf="!cargando && producto" class="detalle-content">
     <div class="row">
       <!-- Columna de imagen/3D -->
       <div class="col-md-6">
-        <div class="imagen-section">
-          <img [src]="producto.imagen || 'https://picsum.photos/500/400'" 
-               [alt]="producto.nombre"
-               class="producto-imagen">
-        </div>
-        
-        <!-- Aquí integras tu Three.js -->
-        <div class="threejs-section mt-4">
-          <h4>Vista 3D del Producto</h4>
-          <app-escena3d></app-escena3d>
+        <div class="vista-container">
+          
+          <!-- Botón para alternar vista -->
+          <div class="vista-controls">
+            <button (click)="alternarVista()" class="btn-vista-toggle">
+              <i class="bi" [class.bi-cube]="vistaActiva === 'imagen'" [class.bi-image]="vistaActiva === 'modelo3d'"></i>
+              {{ vistaActiva === 'imagen' ? 'Ver en 3D' : 'Ver Imagen 2D' }}
+            </button>
+          </div>
+
+          <!-- Vista de Imagen -->
+          <div *ngIf="vistaActiva === 'imagen'" class="vista-imagen">
+            <img [src]="producto.imagen || 'https://picsum.photos/500/400'" 
+                 [alt]="producto.nombre"
+                 class="producto-imagen">
+          </div>
+          
+          <!-- Vista 3D -->
+          <div *ngIf="vistaActiva === 'modelo3d'" class="vista-3d">
+            <app-escena3d [modeloUrl]="producto.modelo_3d_url"></app-escena3d>
+          </div>
         </div>
       </div>
 
@@ -46,6 +52,12 @@
             <button class="btn-comprar-ahora">
               Comprar Ahora
             </button>
+          </div>
+
+          <!-- Indicador de vista 3D disponible -->
+          <div *ngIf="producto.modelo_3d_url" class="alert alert-info mt-3">
+            <i class="bi bi-info-circle me-2"></i>
+            Este producto tiene vista 3D disponible
           </div>
         </div>
       </div>
