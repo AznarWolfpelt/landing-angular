@@ -1,63 +1,205 @@
+/* inicio.css - Versión mejorada para coincidir con PHP */
+
+/* Hero Section - Temporal (luego pondrás el carrusel) */
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-color) 0%, #19c2c6 100%);
   color: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin-bottom: 3rem;
 }
 
+/* Tarjeta de Bienvenida - COINCIDIENDO CON PHP */
 .welcome-card {
-  background: #f8f9fa;
-  border-radius: 12px;
-  border: 1px solid #e9ecef;
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  padding: 1.5rem;
 }
 
+.theme-badge {
+  background: var(--border-color);
+  color: var(--fg-color);
+  font-size: 0.75rem;
+}
+
+/* Tarjetas de Estadísticas - COINCIDIENDO CON PHP */
 .stats-card {
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #dee2e6;
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  text-align: center;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
 }
 
 .stat-value {
-  color: #495057;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-bottom: 0.5rem;
 }
 
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--muted-color);
+}
+
+/* Product Cards - COINCIDIENDO CON PHP */
 .product-card {
-  border: 1px solid #e9ecef;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
 }
 
 .product-image {
   height: 200px;
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
+  background-color: var(--bg-color);
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
 }
 
 .product-name {
-  color: #495057;
   font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--fg-color);
 }
 
 .product-price {
-  color: #28a745;
-  font-weight: 700;
+  color: var(--accent-color);
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+/* Banner Promocional - COINCIDIENDO CON PHP */
+.promo-banner {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #475569;
+  border-radius: 16px;
+  padding: 2.5rem;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.promo-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(0, 198, 224, 0.1), transparent);
+  transform: rotate(-45deg);
+  z-index: 1;
+}
+
+.promo-banner > * {
+  position: relative;
+  z-index: 2;
+}
+
+.promo-banner h3 {
+  color: white !important;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.promo-banner p {
+  color: #e2e8f0 !important;
+  margin-bottom: 1.5rem;
   font-size: 1.1rem;
 }
 
-.promo-banner {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
+.promo-code {
+  background: rgba(0, 198, 224, 0.2);
+  border: 2px solid var(--accent-color);
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  display: inline-block;
+  margin-bottom: 1.5rem;
 }
 
-.promo-code {
-  background: rgba(255,255,255,0.2);
-  padding: 10px 20px;
-  border-radius: 8px;
-  display: inline-block;
+.promo-code span {
+  color: var(--accent-color) !important;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(0, 198, 224, 0.5);
+}
+
+/* Para tema claro */
+[data-bs-theme="light"] .promo-banner {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: 1px solid #2563eb;
+}
+
+[data-bs-theme="light"] .promo-banner p {
+  color: #f1f5f9 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .promo-banner {
+    padding: 2rem 1.5rem;
+  }
+  
+  .promo-code {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .promo-code span {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .promo-banner {
+    padding: 1.5rem 1rem;
+  }
+  
+  .promo-banner h3 {
+    font-size: 1.3rem;
+  }
+  
+  .promo-banner p {
+    font-size: 1rem;
+  }
+  
+  .promo-code {
+    padding: 0.5rem 1rem;
+  }
+  
+  .promo-code span {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+  
+  .stats-card {
+    padding: 0.75rem;
+  }
+  
+  .stat-value {
+    font-size: 1.25rem;
+  }
 }

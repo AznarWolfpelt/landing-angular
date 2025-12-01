@@ -1,42 +1,109 @@
-<!-- Contenido principal con padding-top para la navbar fixed -->
+<!-- inicio.html - VERSIÓN COMPLETA CON CARRUSEL -->
 <main class="container mt-5 pt-4">
 
-  <!-- Hero Section (puedes adaptar tu carrusel después) -->
-  <div class="hero-section text-center mb-5 py-5 rounded-3">
-    <h1 class="display-4 fw-bold mb-4">Bienvenido a Nuestra Tienda</h1>
-    <p class="lead mb-4">Descubre los mejores productos tecnológicos al mejor precio</p>
-    <a [routerLink]="['/productos']" class="btn btn-primary btn-lg px-4">
-      Explorar Productos
-    </a>
+  <!-- Carrusel Hero - IDÉNTICO AL PHP -->
+  <div id="heroCarousel" class="carousel slide hero-carousel mb-4" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner rounded-3 overflow-hidden">
+      <!-- Slide 1 -->
+      <div class="carousel-item active">
+        <div class="carousel-image-container">
+          <img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1442&q=80" 
+               class="d-block w-100" alt="Nueva Colección Gaming">
+        </div>
+        <div class="carousel-caption d-none d-md-block text-start">
+          <h3 class="carousel-title">Nueva Colección Gaming</h3>
+          <p class="carousel-text">Descubre los últimos periféricos y accesorios para gamers</p>
+          <a [routerLink]="['/productos']" class="btn btn-primary-custom btn-lg">Explorar Ahora</a>
+        </div>
+        <!-- Captión para móviles -->
+        <div class="carousel-mobile-caption d-md-none text-center p-3">
+          <h5 class="mb-2">Nueva Colección Gaming</h5>
+          <p class="small mb-3">Descubre los últimos periféricos y accesorios</p>
+          <a [routerLink]="['/productos']" class="btn btn-primary-custom btn-sm">Explorar</a>
+        </div>
+      </div>
+      
+      <!-- Slide 2 -->
+      <div class="carousel-item">
+        <div class="carousel-image-container">
+          <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" 
+               class="d-block w-100" alt="Ofertas de Temporada">
+        </div>
+        <div class="carousel-caption d-none d-md-block text-start">
+          <h3 class="carousel-title">Ofertas de Temporada</h3>
+          <p class="carousel-text">Hasta 30% de descuento en productos seleccionados</p>
+          <a [routerLink]="['/productos']" class="btn btn-primary-custom btn-lg">Ver Ofertas</a>
+        </div>
+        <div class="carousel-mobile-caption d-md-none text-center p-3">
+          <h5 class="mb-2">Ofertas de Temporada</h5>
+          <p class="small mb-3">Hasta 30% de descuento</p>
+          <a [routerLink]="['/productos']" class="btn btn-primary-custom btn-sm">Ver Ofertas</a>
+        </div>
+      </div>
+      
+      <!-- Slide 3 -->
+      <div class="carousel-item">
+        <div class="carousel-image-container">
+          <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" 
+               class="d-block w-100" alt="Equipos de Última Generación">
+        </div>
+        <div class="carousel-caption d-none d-md-block text-start">
+          <h3 class="carousel-title">Equipos de Última Generación</h3>
+          <p class="carousel-text">Laptops y componentes con la mejor relación calidad-precio</p>
+          <a [routerLink]="['/productos']" class="btn btn-primary-custom btn-lg">Comprar Ahora</a>
+        </div>
+        <div class="carousel-mobile-caption d-md-none text-center p-3">
+          <h5 class="mb-2">Equipos de Última Generación</h5>
+          <p class="small mb-3">La mejor relación calidad-precio</p>
+          <a [routerLink]="['/productos']" class="btn btn-primary-custom btn-sm">Comprar</a>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Siguiente</span>
+    </button>
   </div>
 
-  <!-- Tarjeta de Bienvenida -->
-  <div class="welcome-card p-4 mb-5">
+  <!-- Tarjeta de Bienvenida - ESTRUCTURA CORRECTA -->
+  <div class="welcome-card p-3 p-md-4 mb-4 mb-md-5">
     <div class="row align-items-center">
       <div class="col-lg-8 mb-3 mb-lg-0">
         <h2 class="h4 mb-2">¡Bienvenido a nuestra tienda!</h2>
         <p class="mb-0 text-muted">
-          Explora nuestra amplia selección de productos tecnológicos
+          Explora nuestra amplia selección de productos tecnológicos. 
+          Tema preferido: <strong>claro</strong>
+          <span class="badge theme-badge ms-2">Tema activo</span>
         </p>
       </div>
       <div class="col-lg-4">
-        <div class="row g-3 text-center">
+        <!-- ESTA ES LA ESTRUCTURA CORRECTA PARA LAS STATS HORIZONTALES -->
+        <div class="row g-2 g-md-3 text-center">
           <div class="col-4">
             <div class="stats-card p-2">
               <div class="stat-value h5 mb-1">{{ productosDestacados.length }}</div>
-              <div class="stat-label small text-muted">Productos</div>
+              <div class="stat-label small">Productos</div>
             </div>
           </div>
           <div class="col-4">
             <div class="stats-card p-2">
               <div class="stat-value h5 mb-1">15%</div>
-              <div class="stat-label small text-muted">Descuento</div>
+              <div class="stat-label small">Descuento</div>
             </div>
           </div>
           <div class="col-4">
             <div class="stats-card p-2">
               <div class="stat-value h5 mb-1">4</div>
-              <div class="stat-label small text-muted">Categorías</div>
+              <div class="stat-label small">Categorías</div>
             </div>
           </div>
         </div>
@@ -44,34 +111,31 @@
     </div>
   </div>
 
-  <!-- Productos Destacados -->
-  <div class="mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="h3 mb-0">Productos Destacados</h2>
-      <a [routerLink]="['/productos']" class="btn btn-outline-primary">Ver Todos</a>
+  <!-- Resto del contenido igual que antes... -->
+  <div class="mb-4 mb-md-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="h4 mb-0">Productos Destacados</h2>
+      <a [routerLink]="['/productos']" class="btn btn-outline-primary btn-sm">Ver Todos</a>
     </div>
 
-    <!-- Loading -->
     <div *ngIf="cargando" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Cargando...</span>
       </div>
     </div>
 
-    <!-- Grid de Productos -->
     <div class="row g-4" *ngIf="!cargando">
       <div class="col-md-6 col-lg-4" *ngFor="let producto of productosDestacados">
-        <div class="product-card h-100">
+        <div class="product-card">
           <div class="product-image" 
-               [style.backgroundImage]="'url(' + producto.imagen + ')'">
+               [style.backgroundImage]="'url(' + (producto.imagen_url || producto.imagen || 'assets/images/placeholder.jpg') + ')'">
           </div>
-          <div class="p-3 d-flex flex-column">
-            <h5 class="product-name">{{ producto.nombre }}</h5>
-            <p class="text-muted small mb-2">{{ producto.categoria }}</p>
-            <div class="mt-auto d-flex justify-content-between align-items-center">
-              <span class="product-price">${{ producto.precio }}</span>
-              <a [routerLink]="['/productos', producto.id]" 
-                 class="btn btn-primary btn-sm">
+          <div class="p-3">
+            <h5 class="product-name">{{ producto.titulo || producto.nombre }}</h5>
+            <p class="text-muted small mb-2">{{ producto.categoria || 'Sin categoría' }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="product-price">${{ (producto.precio || 0) | number:'1.2-2' }}</span>
+              <a [routerLink]="['/productos', producto.id]" class="btn btn-primary-custom btn-sm">
                 Ver Detalles
               </a>
             </div>
@@ -82,14 +146,14 @@
   </div>
 
   <!-- Banner Promocional -->
-  <div class="promo-banner text-center p-5 rounded-3 mb-4">
-    <h3 class="h2 mb-3 fw-bold">🎉 Oferta Especial</h3>
-    <p class="mb-4 fs-5">Descuento del <strong>15%</strong> en tu primera compra</p>
-    <div class="promo-code mb-4">
+  <div class="promo-banner text-center p-4 p-md-5 rounded-3 mb-4">
+    <h3 class="h3 mb-3 fw-bold">🎉 Oferta Especial para Nuevos Usuarios</h3>
+    <p class="mb-3 mb-md-4 fs-5">Descuento del <strong>15%</strong> en tu primera compra usando el código:</p>
+    <div class="promo-code mb-3 mb-md-4">
       <span class="fs-3 fw-bold">BIENVENIDO15</span>
     </div>
-    <a [routerLink]="['/productos']" class="btn btn-primary btn-lg px-4 py-3 fw-bold">
-      Ver Todos los Productos
+    <a [routerLink]="['/productos']" class="btn btn-primary-custom btn-lg px-4 py-3 fw-bold">
+      <i class="bi bi-arrow-right me-2"></i>Ver Todos los Productos
     </a>
   </div>
 

@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { CartService } from '../../services/cart.service';
 import { Escena3dComponent } from '../../components/escena3d/escena3d.component';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms'; // ← AÑADE ESTO
 
 @Component({
   selector: 'app-detalle-producto',
@@ -12,7 +13,8 @@ import { RouterModule } from '@angular/router';
   imports: [
     CommonModule, 
     Escena3dComponent,
-    RouterModule
+    RouterModule,
+    FormsModule // ← AÑADE ESTO para ngModel
   ],
   templateUrl: './detalle-producto.html',
   styleUrls: ['./detalle-producto.css']
@@ -21,7 +23,8 @@ export class DetalleProducto implements OnInit {
   producto: any = null;
   cargando: boolean = true;
   productoId: number = 0;
-  vistaActiva: 'imagen' | 'modelo3d' = 'imagen'; // Nueva propiedad
+  vistaActiva: 'imagen' | 'modelo3d' = 'imagen';
+  cantidad: number = 1; // ← AÑADE ESTA PROPIEDAD
 
   constructor(
     private route: ActivatedRoute,
@@ -42,10 +45,7 @@ export class DetalleProducto implements OnInit {
         next: (data) => {
           this.producto = data;
           this.cargando = false;
-          
-          // ✅ DEBUG: Ver qué datos llegan del backend
           console.log('🔍 Producto cargado:', data);
-          console.log('🔍 Modelo 3D URL:', data.modelo_3d_url);
         },
         error: (error) => {
           console.error('Error:', error);
@@ -61,10 +61,10 @@ export class DetalleProducto implements OnInit {
   agregarAlCarrito() {
     if (!this.producto) return;
     
-    this.cartService.addToCart(this.producto.id, 1).subscribe({
+    this.cartService.addToCart(this.producto.id, this.cantidad).subscribe({
       next: (response) => {
         console.log('Producto agregado:', response);
-        alert(`✅ ${this.producto.nombre} agregado al carrito`);
+        alert(`✅ ${this.producto.nombre || this.producto.titulo} agregado al carrito`);
       },
       error: (error) => {
         console.error('Error:', error);

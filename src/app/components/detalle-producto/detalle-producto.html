@@ -1,71 +1,147 @@
-<div class="detalle-container">
-  <!-- ... código anterior ... -->
-  
-  <div *ngIf="!cargando && producto" class="detalle-content">
-    <div class="row">
-      <!-- Columna de imagen/3D -->
-      <div class="col-md-6">
-        <div class="vista-container">
-          
-          <!-- Botón para alternar vista -->
-          <div class="vista-controls">
-            <button (click)="alternarVista()" class="btn-vista-toggle">
-              <i class="bi" [class.bi-cube]="vistaActiva === 'imagen'" [class.bi-image]="vistaActiva === 'modelo3d'"></i>
-              {{ vistaActiva === 'imagen' ? 'Ver en 3D' : 'Ver Imagen 2D' }}
-            </button>
-          </div>
+<main class="container mt-5 pt-4">
+  <!-- Navegación tipo breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a [routerLink]="['/productos']" class="text-decoration-none">Productos</a></li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {{ producto?.nombre || 'Cargando...' }}
+      </li>
+    </ol>
+  </nav>
 
-          <!-- Vista de Imagen -->
-          <div *ngIf="vistaActiva === 'imagen'" class="vista-imagen">
-            <img [src]="producto.imagen || 'https://picsum.photos/500/400'" 
-                 [alt]="producto.nombre"
-                 class="producto-imagen">
-          </div>
-          
-          <!-- Vista 3D -->
-          <div *ngIf="vistaActiva === 'modelo3d'" class="vista-3d">
-            <app-escena3d [modeloUrl]="producto.modelo_3d_url"></app-escena3d>
-          </div>
+  <!-- Loading -->
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+
+  <!-- Producto no encontrado -->
+  <div *ngIf="!cargando && !producto" class="alert alert-warning text-center py-5">
+    <i class="bi bi-exclamation-triangle display-4 mb-3"></i>
+    <h3 class="h4 mb-3">Producto no encontrado</h3>
+    <p class="mb-4">El producto que buscas no existe o fue eliminado.</p>
+    <a [routerLink]="['/productos']" class="btn btn-primary-custom">Volver a la Tienda</a>
+  </div>
+
+  <!-- Detalles del producto -->
+  <div *ngIf="!cargando && producto" class="row g-4">
+    <!-- Columna de imagen/3D -->
+    <div class="col-lg-6">
+      <div class="product-detail-image card border-0">
+        
+        <!-- Controles de vista -->
+        <div class="vista-controls mb-3 text-end">
+          <button (click)="alternarVista()" class="btn btn-outline-primary btn-sm">
+            <i class="bi" [class.bi-cube]="vistaActiva === 'imagen'" [class.bi-image]="vistaActiva === 'modelo3d'"></i>
+            {{ vistaActiva === 'imagen' ? 'Ver en 3D' : 'Ver Imagen 2D' }}
+          </button>
+        </div>
+
+        <!-- Vista de Imagen -->
+        <div *ngIf="vistaActiva === 'imagen'">
+          <img [src]="producto.imagen_url || producto.imagen || 'https://picsum.photos/seed/placeholder/800/600'" 
+               [alt]="producto.nombre || producto.titulo" 
+               class="card-img-top rounded-3">
+        </div>
+        
+        <!-- Vista 3D -->
+        <div *ngIf="vistaActiva === 'modelo3d'" class="vista-3d-container">
+          <app-escena3d [modeloUrl]="producto.modelo_3d_url"></app-escena3d>
+        </div>
+
+        <!-- Indicador 3D -->
+        <div *ngIf="producto.modelo_3d_url" class="alert alert-info mt-3">
+          <i class="bi bi-info-circle me-2"></i>
+          Este producto tiene vista 3D disponible
         </div>
       </div>
-
-      <!-- Columna de información -->
-      <div class="col-md-6">
-        <div class="producto-info">
-          <div class="categoria-badge">{{ producto.categoria || 'General' }}</div>
-          <h1 class="producto-titulo">{{ producto.nombre }}</h1>
-          <p class="producto-descripcion" *ngIf="producto.descripcion">
-            {{ producto.descripcion }}
-          </p>
-          
-          <div class="precio-section">
-            <span class="precio">${{ producto.precio }}</span>
-            <span *ngIf="producto.stock" class="stock-disponible">
-              {{ producto.stock }} disponibles
-            </span>
+    </div>
+    
+    <!-- Información del producto -->
+    <div class="col-lg-6">
+      <div class="product-info">
+        <h1 class="h2 mb-3 product-name">{{ producto.nombre || producto.titulo }}</h1>
+        
+        <!-- Categoría -->
+        <div class="mb-3">
+          <span class="badge bg-secondary fs-6">{{ producto.categoria || 'General' }}</span>
+        </div>
+        
+        <!-- Precio -->
+        <div class="mb-4">
+          <span class="h3 text-accent fw-bold">${{ (producto.precio || 0) | number:'1.2-2' }}</span>
+        </div>
+        
+        <!-- Descripción -->
+        <div class="mb-4">
+          <h5 class="h6 mb-2">Descripción</h5>
+          <p class="text-muted">{{ producto.descripcion || 'Sin descripción disponible' }}</p>
+        </div>
+        
+        <!-- Estado del stock -->
+        <div class="mb-4">
+          <div *ngIf="(producto.stock || 0) <= 0" class="alert alert-danger d-inline-flex align-items-center">
+            <i class="bi bi-x-circle me-2"></i>
+            Producto temporalmente agotado
           </div>
-
-          <div class="acciones-section">
-            <button class="btn-agregar-carrito" (click)="agregarAlCarrito()">
-              Agregar al Carrito
-            </button>
-            <button class="btn-comprar-ahora">
-              Comprar Ahora
-            </button>
+          <div *ngIf="(producto.stock || 0) > 0 && (producto.stock || 0) < 10" class="alert alert-warning d-inline-flex align-items-center">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            ¡Últimas {{ producto.stock }} unidades!
           </div>
-
-          <!-- Indicador de vista 3D disponible -->
-          <div *ngIf="producto.modelo_3d_url" class="alert alert-info mt-3">
-            <i class="bi bi-info-circle me-2"></i>
-            Este producto tiene vista 3D disponible
+          <div *ngIf="(producto.stock || 0) >= 10" class="text-success d-flex align-items-center">
+            <i class="bi bi-check-circle me-2"></i>
+            <span>En stock - {{ producto.stock }} disponibles</span>
+          </div>
+        </div>
+        
+        <!-- Controles para agregar al carrito -->
+        <div class="mb-4">
+          <div class="row g-3 align-items-center">
+            <div class="col-auto">
+              <label for="cantidad" class="col-form-label fw-bold">Cantidad:</label>
+            </div>
+            <div class="col-auto">
+              <input type="number" id="cantidad" 
+                     [(ngModel)]="cantidad" 
+                     [min]="1" [max]="producto.stock || 1"
+                     class="form-control" style="width: 100px;"
+                     [disabled]="(producto.stock || 0) <= 0">
+            </div>
+            <div class="col-auto">
+              <button (click)="agregarAlCarrito()" class="btn btn-primary-custom btn-lg px-4" 
+                      [disabled]="(producto.stock || 0) <= 0">
+                <i class="bi bi-cart-plus me-2"></i>
+                {{ (producto.stock || 0) > 0 ? 'Agregar al Carrito' : 'Sin Stock' }}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Información adicional -->
+        <div class="product-meta border-top pt-3">
+          <div class="row small text-muted">
+            <div class="col-6">
+              <i class="bi bi-clock me-1"></i>
+              ID: #{{ producto.id }}
+            </div>
+            <div class="col-6 text-end" *ngIf="producto.creado_en">
+              <i class="bi bi-upc-scan me-1"></i>
+              Agregado: {{ producto.creado_en | date:'dd/MM/yyyy' }}
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div *ngIf="!cargando && !producto" class="error-producto">
-    <h2>Producto no encontrado</h2>
-    <p>El producto que buscas no existe o no está disponible.</p>
+  
+  <!-- Productos relacionados (placeholder) -->
+  <div *ngIf="!cargando && producto" class="mt-5 pt-4 border-top">
+    <h3 class="h4 mb-4">Productos Relacionados</h3>
+    <div class="row g-3">
+      <div class="col-12 text-center py-4">
+        <p class="text-muted">Cargando productos relacionados...</p>
+      </div>
+    </div>
   </div>
-</div>
+</main>

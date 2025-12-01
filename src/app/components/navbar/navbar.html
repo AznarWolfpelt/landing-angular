@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
   <div class="container">
     <a class="navbar-brand d-flex align-items-center" [routerLink]="['/']">
       <i class="bi bi-controller me-2"></i>
@@ -35,22 +35,29 @@
             <span class="d-lg-none d-xl-inline">Soporte</span>
           </a>
         </li>
+        <!-- Opcional: Menú administrativo -->
+        <li class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="bi bi-gear me-1"></i>
+            <span class="d-lg-none d-xl-inline">Administrar</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/carrito']" routerLinkActive="active">
+            <i class="bi bi-cart me-1"></i>
+            <span class="d-lg-none d-xl-inline">Carrito</span>
+            <span *ngIf="itemsCarrito > 0" class="badge bg-danger ms-1">{{ itemsCarrito }}</span>
+          </a>
+        </li>
       </ul>
       
       <div class="d-flex align-items-center">
-        <!-- Carrito con contador -->
-        <a class="nav-link me-3 position-relative" [routerLink]="['/carrito']">
-          <i class="bi bi-cart me-1"></i>
-          <span class="d-lg-none d-xl-inline">Carrito</span>
-          <span *ngIf="itemsCarrito > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle">
-            {{ itemsCarrito }}
-          </span>
-        </a>
+        <!-- Carrito movido arriba para coincidir con PHP -->
         
-        <!-- Usuario placeholder -->
+        <!-- Usuario -->
+        <div class="user-avatar me-2 d-none d-md-flex">U</div>
         <div class="dropdown">
           <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <div class="user-avatar me-2">U</div>
             <span class="d-none d-md-inline">Usuario</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
