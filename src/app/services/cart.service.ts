@@ -20,7 +20,7 @@ export interface CartItem {
 })
 export class CartService {
   private apiUrl = 'http://localhost:3000/api';
-  public sessionId: string = ''; // ← CAMBIAR A PUBLIC
+  public sessionId: string = '';
 
   constructor(
     private http: HttpClient,
@@ -30,7 +30,6 @@ export class CartService {
   }
 
   private generateSessionId(): string {
-    // Solo usar localStorage en el navegador
     if (isPlatformBrowser(this.platformId)) {
       let sessionId = localStorage.getItem('cart_session_id');
       if (!sessionId) {
@@ -39,7 +38,6 @@ export class CartService {
       }
       return sessionId;
     } else {
-      // En servidor, usar un ID temporal
       return 'server_temp_session';
     }
   }

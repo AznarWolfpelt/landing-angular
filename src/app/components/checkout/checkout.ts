@@ -23,12 +23,14 @@ export class Checkout implements OnInit {
     telefono: '',
     direccion: '',
     ciudad: '',
-    notas: ''
+    notas: '',
+    tipoEnvio: 'regular' // Nuevo campo para tipo de envío
   };
 
   // Totales
   subtotal: number = 0;
   impuestos: number = 0;
+  envio: number = 10.00; // ENVÍO FIJO DE $10
   total: number = 0;
 
   // Estados
@@ -64,63 +66,64 @@ export class Checkout implements OnInit {
   calcularTotales() {
     this.subtotal = this.items.reduce((sum, item) => sum + (item.precio_unit * item.cantidad), 0);
     this.impuestos = this.subtotal * 0.16;
-    this.total = this.subtotal + this.impuestos;
+    this.envio = 10.00; // FIJO $10
+    this.total = this.subtotal + this.impuestos + this.envio;
   }
 
-// En checkout.ts, modifica el método confirmarPedido()
-confirmarPedido() {
-  console.log('🔍 CHECKOUT - Items en carrito:', this.items);
-  console.log('🔍 CHECKOUT - Session ID:', this.cartService.sessionId);
-  if (this.items.length === 0) {
-    this.mostrarMensaje('Tu carrito está vacío', 'error');
-    return;
-  }
-
-  if (!this.validarFormulario()) {
-    this.mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
-    return;
-  }
-
-  this.procesando = true;
-
-  // ✅ USAR EL SESSION_ID CORRECTO (sin el "as any")
-  const sessionId = this.cartService.sessionId;
-  console.log('🔍 CHECKOUT - Session ID a enviar:', sessionId);
-
-  const pedidoData = {
-    session_id: sessionId,  // ← ESTE ES EL SESSION_ID REAL
-    ...this.formData,
-    items: this.items.map(item => ({
-      producto_id: item.producto_id,
-      nombre: item.nombre,
-      precio_unit: item.precio_unit,
-      cantidad: item.cantidad
-    })),
-    subtotal: this.subtotal,
-    impuestos: this.impuestos,
-    total: this.total
-  };
-
-  this.http.post('http://localhost:3000/api/ordenes', pedidoData).subscribe({
-    next: (response: any) => {
-      this.procesando = false;
-      
-      // ✅ REDIRIGIR CON LOS DATOS CORRECTOS
-      this.router.navigate(['/confirmacion-pedido'], {
-        queryParams: {
-          codigo: response.codigo,
-          total: response.total,
-          email: this.formData.email
-        }
-      });
-    },
-    error: (error) => {
-      console.error('Error confirmando pedido:', error);
-      this.procesando = false;
-      this.mostrarMensaje('Error al procesar el pedido: ' + (error.error?.error || 'Error desconocido'), 'error');
+  confirmarPedido() {
+    console.log('🔍 CHECKOUT - Items en carrito:', this.items);
+    console.log('🔍 CHECKOUT - Session ID:', this.cartService.sessionId);
+    if (this.items.length === 0) {
+      this.mostrarMensaje('Tu carrito está vacío', 'error');
+      return;
     }
-  });
-}
+
+    if (!this.validarFormulario()) {
+      this.mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
+      return;
+    }
+
+    this.procesando = true;
+
+    const sessionId = this.cartService.sessionId;
+    console.log('🔍 CHECKOUT - Session ID a enviar:', sessionId);
+
+    const pedidoData = {
+      session_id: sessionId,
+      ...this.formData,
+      items: this.items.map(item => ({
+        producto_id: item.producto_id,
+        nombre: item.nombre,
+        precio_unit: item.precio_unit,
+        cantidad: item.cantidad
+      })),
+      subtotal: this.subtotal,
+      impuestos: this.impuestos,
+      envio: this.envio, // Incluir costo de envío
+      total: this.total,
+      tipoEnvio: this.formData.tipoEnvio // Tipo de envío seleccionado
+    };
+
+    this.http.post('http://localhost:3000/api/ordenes', pedidoData).subscribe({
+      next: (response: any) => {
+        this.procesando = false;
+        
+        this.router.navigate(['/confirmacion-pedido'], {
+          queryParams: {
+            codigo: response.codigo,
+            total: response.total,
+            email: this.formData.email
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error confirmando pedido:', error);
+        this.procesando = false;
+        this.mostrarMensaje('Error al procesar el pedido: ' + (error.error?.error || 'Error desconocido'), 'error');
+      }
+    });
+  }
+
   validarFormulario(): boolean {
     return !!(this.formData.nombre && 
               this.formData.email && 
@@ -130,7 +133,6 @@ confirmarPedido() {
   }
 
   limpiarCarrito() {
-    // Limpiar todos los items del carrito
     this.items.forEach(item => {
       this.cartService.removeFromCart(item.id).subscribe();
     });
