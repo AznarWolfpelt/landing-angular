@@ -228,7 +228,7 @@ export class Escena3dComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     loader.load(
-      '/assets/modelos/gaming_desktop_pc_blend_file.glb',
+      'assets/modelos/gaming_desktop_pc_blend_file.glb',
       (gltf) => {
         console.log('✅ Modelo por defecto cargado');
         const model = gltf.scene;
