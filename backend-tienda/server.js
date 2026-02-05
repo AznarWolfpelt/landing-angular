@@ -46,108 +46,110 @@ app.get('/api/productos', async (req, res) => {
 });
 
 // GET producto individual
-app.get('/api/productos/:id', (req, res) => {
-  const productId = req.params.id;
-  db.query(`
-    SELECT id, titulo as nombre, precio, imagen_url as imagen, 
-           categoria, stock, descripcion, modelo_3d_url
-    FROM productos 
-    WHERE id = ? AND activo = 1
-  `, [productId], (error, results) => {
-    if (error) {
-      console.error('Error:', error);
-      return res.status(500).json({ error: 'Error en la base de datos' });
-    }
+app.get('/api/productos/:id', async (req, res) => {
+  try {
+
+    const productId = req.params.id;
+
+    const [results] = await db.query(`
+      SELECT id, titulo as nombre, precio, imagen_url as imagen, 
+             categoria, stock, descripcion, modelo_3d_url
+      FROM productos 
+      WHERE id = ? AND activo = 1
+    `, [productId]);
+
     if (results.length === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
+
     res.json(results[0]);
-  });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error en la base de datos' });
+  }
 });
 
 // GET carrito - USA TU TABLA carrito_items
-app.get('/api/carrito', (req, res) => {
-  const sessionId = req.query.session_id;
-  
-  db.query(`
-    SELECT 
-      ci.id,
-      ci.producto_id,
-      ci.cantidad,
-      ci.precio_unit,
-      p.titulo as nombre,
-      p.descripcion,
-      p.categoria,
-      p.imagen_url as imagen,
-      p.stock
-    FROM carrito_items ci
-    INNER JOIN productos p ON ci.producto_id = p.id
-    WHERE ci.session_id = ? AND p.activo = 1
-  `, [sessionId], (error, results) => {
-    if (error) {
-      console.error('Error:', error);
-      return res.status(500).json({ error: 'Error en la base de datos' });
-    }
+app.get('/api/carrito', async (req, res) => {
+  try {
+
+    const sessionId = req.query.session_id;
+
+    const [results] = await db.query(`
+      SELECT 
+        ci.id,
+        ci.producto_id,
+        ci.cantidad,
+        ci.precio_unit,
+        p.titulo as nombre,
+        p.descripcion,
+        p.categoria,
+        p.imagen_url as imagen,
+        p.stock
+      FROM carrito_items ci
+      INNER JOIN productos p ON ci.producto_id = p.id
+      WHERE ci.session_id = ? AND p.activo = 1
+    `, [sessionId]);
+
     res.json(results);
-  });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error en la base de datos' });
+  }
 });
 
+
 // POST agregar al carrito - USA TU TABLA carrito_items
-app.post('/api/carrito/agregar', (req, res) => {
-  const { session_id, producto_id, cantidad } = req.body;
-  
-  // Verificar si el producto existe y está activo
-  db.query(`
-    SELECT id, titulo, precio, stock FROM productos 
-    WHERE id = ? AND activo = 1
-  `, [producto_id], (error, results) => {
-    if (error) {
-      return res.status(500).json({ error: 'Error en la base de datos' });
-    }
-    
-    if (results.length === 0) {
+app.post('/api/carrito/agregar', async (req, res) => {
+  try {
+
+    const { session_id, producto_id, cantidad } = req.body;
+
+    const [productos] = await db.query(`
+      SELECT id, precio FROM productos
+      WHERE id = ? AND activo = 1
+    `, [producto_id]);
+
+    if (productos.length === 0)
       return res.status(404).json({ error: 'Producto no encontrado' });
-    }
-    
-    const producto = results[0];
-    
-    // Verificar si ya existe en el carrito
-    db.query(`
-      SELECT id, cantidad FROM carrito_items 
+
+    const producto = productos[0];
+
+    const [cart] = await db.query(`
+      SELECT id, cantidad FROM carrito_items
       WHERE session_id = ? AND producto_id = ?
-    `, [session_id, producto_id], (error, cartResults) => {
-      if (error) {
-        return res.status(500).json({ error: 'Error en la base de datos' });
-      }
-      
-      if (cartResults.length > 0) {
-        // Actualizar cantidad si ya existe
-        const nuevaCantidad = cartResults[0].cantidad + cantidad;
-        db.query(`
-          UPDATE carrito_items 
-          SET cantidad = ?, updated_at = NOW() 
-          WHERE id = ?
-        `, [nuevaCantidad, cartResults[0].id], (error) => {
-          if (error) {
-            return res.status(500).json({ error: 'Error actualizando carrito' });
-          }
-          res.json({ success: true, message: 'Producto actualizado en carrito' });
-        });
-      } else {
-        // Insertar nuevo item
-        db.query(`
-          INSERT INTO carrito_items (session_id, producto_id, cantidad, precio_unit) 
-          VALUES (?, ?, ?, ?)
-        `, [session_id, producto_id, cantidad, producto.precio], (error) => {
-          if (error) {
-            return res.status(500).json({ error: 'Error agregando al carrito' });
-          }
-          res.json({ success: true, message: 'Producto agregado al carrito' });
-        });
-      }
-    });
-  });
+    `, [session_id, producto_id]);
+
+    if (cart.length > 0) {
+
+      const nuevaCantidad = cart[0].cantidad + cantidad;
+
+      await db.query(`
+        UPDATE carrito_items
+        SET cantidad = ?, updated_at = NOW()
+        WHERE id = ?
+      `, [nuevaCantidad, cart[0].id]);
+
+    } else {
+
+      await db.query(`
+        INSERT INTO carrito_items
+        (session_id, producto_id, cantidad, precio_unit)
+        VALUES (?, ?, ?, ?)
+      `, [session_id, producto_id, cantidad, producto.precio]);
+
+    }
+
+    res.json({ success: true });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error agregando al carrito' });
+  }
 });
+
 
 // PUT actualizar cantidad
 app.put('/api/carrito/actualizar/:id', (req, res) => {
