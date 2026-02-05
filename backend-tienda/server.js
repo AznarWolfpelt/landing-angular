@@ -13,15 +13,15 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
   database: process.env.MYSQLDATABASE,
   port: process.env.MYSQLPORT,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 // ✅ Conectar a la base
