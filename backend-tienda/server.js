@@ -24,17 +24,11 @@ const db = mysql.createPool({
   queueLimit: 0
 });
 
-// ✅ Conectar a la base
-db.connect((err) => {
-  if (err) {
-    console.error('Error conectando a la BD:', err);
-    return;
-  }
-  console.log('✅ Conectado a la base de datos MySQL');
-});
-
 // GET productos
 app.get('/api/productos', (req, res) => {
+  db.query("SELECT 1")
+  .then(() => console.log("DB OK"))
+  .catch(err => console.error(err));
   db.query(`
     SELECT id, titulo as nombre, precio, imagen_url as imagen, 
            categoria, stock, descripcion, modelo_3d_url
