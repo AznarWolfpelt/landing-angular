@@ -4,7 +4,7 @@ console.log("MYSQLDATABASE:", process.env.MYSQLDATABASE);
 console.log("MYSQLPORT:", process.env.MYSQLPORT);
 
 const express = require('express');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const cors = require('cors');
 
 const app = express();
@@ -25,22 +25,24 @@ const db = mysql.createPool({
 });
 
 // GET productos
-app.get('/api/productos', (req, res) => {
-  db.query("SELECT 1")
-  .then(() => console.log("DB OK"))
-  .catch(err => console.error(err));
-  db.query(`
-    SELECT id, titulo as nombre, precio, imagen_url as imagen, 
-           categoria, stock, descripcion, modelo_3d_url
-    FROM productos 
-    WHERE activo = 1
-  `, (error, results) => {
-    if (error) {
-      console.error('Error:', error);
-      return res.status(500).json({ error: 'Error en la base de datos' });
-    }
+app.get('/api/productos', async (req, res) => {
+  try {
+
+    await db.query("SELECT 1"); // test opcional
+
+    const [results] = await db.query(`
+      SELECT id, titulo as nombre, precio, imagen_url as imagen, 
+             categoria, stock, descripcion, modelo_3d_url
+      FROM productos 
+      WHERE activo = 1
+    `);
+
     res.json(results);
-  });
+
+  } catch (error) {
+    console.error("DB ERROR:", error);
+    res.status(500).json({ error: 'Error en la base de datos' });
+  }
 });
 
 // GET producto individual
