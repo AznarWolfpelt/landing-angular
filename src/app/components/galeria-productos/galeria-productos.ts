@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { CartService } from '../../services/cart.service';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-galeria-productos',
@@ -41,9 +42,11 @@ export class GaleriaProductos implements OnInit {
     this.cargarCategorias();
   }
 
+  private apiUrl = environment.apiUrl;
+
   cargarProductos() {
     this.cargando = true;
-    this.http.get<any[]>('http://localhost:3000/api/productos')
+    this.http.get<any[]>(`${this.apiUrl}/productos`)
       .subscribe({
         next: (data) => {
           this.productos = data;

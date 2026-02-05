@@ -6,6 +6,7 @@ import { CartService } from '../../services/cart.service';
 import { Escena3dComponent } from '../../components/escena3d/escena3d.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms'; // ← AÑADE ESTO
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-detalle-producto',
@@ -39,20 +40,22 @@ export class DetalleProducto implements OnInit {
     });
   }
 
-  cargarProducto() {
-    this.http.get<any>(`http://localhost:3000/api/productos/${this.productoId}`)
-      .subscribe({
-        next: (data) => {
-          this.producto = data;
-          this.cargando = false;
-          console.log('🔍 Producto cargado:', data);
-        },
-        error: (error) => {
-          console.error('Error:', error);
-          this.cargando = false;
-        }
-      });
-  }
+private apiUrl = environment.apiUrl;
+
+cargarProducto() {
+  this.http.get<any>(`${this.apiUrl}/productos/${this.productoId}`)
+    .subscribe({
+      next: (data) => {
+        this.producto = data;
+        this.cargando = false;
+        console.log('🔍 Producto cargado:', data);
+      },
+      error: (error) => {
+        console.error('Error:', error);
+        this.cargando = false;
+      }
+    });
+}
 
   alternarVista() {
     this.vistaActiva = this.vistaActiva === 'imagen' ? 'modelo3d' : 'imagen';

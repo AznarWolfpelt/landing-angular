@@ -104,10 +104,10 @@ export class Checkout implements OnInit {
       tipoEnvio: this.formData.tipoEnvio // Tipo de envío seleccionado
     };
 
-    this.http.post('http://localhost:3000/api/ordenes', pedidoData).subscribe({
+    this.http.post('https://landing-angular-production.up.railway.app/api/ordenes', pedidoData).subscribe({
       next: (response: any) => {
         this.procesando = false;
-        
+
         this.router.navigate(['/confirmacion-pedido'], {
           queryParams: {
             codigo: response.codigo,
@@ -119,7 +119,10 @@ export class Checkout implements OnInit {
       error: (error) => {
         console.error('Error confirmando pedido:', error);
         this.procesando = false;
-        this.mostrarMensaje('Error al procesar el pedido: ' + (error.error?.error || 'Error desconocido'), 'error');
+        this.mostrarMensaje(
+          'Error al procesar el pedido: ' + (error.error?.error || 'Error desconocido'),
+          'error'
+        );
       }
     });
   }
