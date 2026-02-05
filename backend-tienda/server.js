@@ -52,7 +52,7 @@ app.get('/api/productos', (req, res) => {
 // GET producto individual
 app.get('/api/productos/:id', (req, res) => {
   const productId = req.params.id;
-  connection.query(`
+  db.query(`
     SELECT id, titulo as nombre, precio, imagen_url as imagen, 
            categoria, stock, descripcion, modelo_3d_url
     FROM productos 
@@ -73,7 +73,7 @@ app.get('/api/productos/:id', (req, res) => {
 app.get('/api/carrito', (req, res) => {
   const sessionId = req.query.session_id;
   
-  connection.query(`
+  db.query(`
     SELECT 
       ci.id,
       ci.producto_id,
@@ -101,7 +101,7 @@ app.post('/api/carrito/agregar', (req, res) => {
   const { session_id, producto_id, cantidad } = req.body;
   
   // Verificar si el producto existe y está activo
-  connection.query(`
+  db.query(`
     SELECT id, titulo, precio, stock FROM productos 
     WHERE id = ? AND activo = 1
   `, [producto_id], (error, results) => {
@@ -116,7 +116,7 @@ app.post('/api/carrito/agregar', (req, res) => {
     const producto = results[0];
     
     // Verificar si ya existe en el carrito
-    connection.query(`
+    db.query(`
       SELECT id, cantidad FROM carrito_items 
       WHERE session_id = ? AND producto_id = ?
     `, [session_id, producto_id], (error, cartResults) => {
@@ -127,7 +127,7 @@ app.post('/api/carrito/agregar', (req, res) => {
       if (cartResults.length > 0) {
         // Actualizar cantidad si ya existe
         const nuevaCantidad = cartResults[0].cantidad + cantidad;
-        connection.query(`
+        db.query(`
           UPDATE carrito_items 
           SET cantidad = ?, updated_at = NOW() 
           WHERE id = ?
@@ -139,7 +139,7 @@ app.post('/api/carrito/agregar', (req, res) => {
         });
       } else {
         // Insertar nuevo item
-        connection.query(`
+        db.query(`
           INSERT INTO carrito_items (session_id, producto_id, cantidad, precio_unit) 
           VALUES (?, ?, ?, ?)
         `, [session_id, producto_id, cantidad, producto.precio], (error) => {
@@ -158,7 +158,7 @@ app.put('/api/carrito/actualizar/:id', (req, res) => {
   const { session_id, cantidad } = req.body;
   const itemId = req.params.id;
   
-  connection.query(`
+  db.query(`
     UPDATE carrito_items 
     SET cantidad = ?, updated_at = NOW() 
     WHERE id = ? AND session_id = ?
@@ -180,7 +180,7 @@ app.delete('/api/carrito/eliminar/:id', (req, res) => {
   const { session_id } = req.body;
   const itemId = req.params.id;
   
-  connection.query(`
+  db.query(`
     DELETE FROM carrito_items 
     WHERE id = ? AND session_id = ?
   `, [itemId, session_id], (error, results) => {
@@ -240,7 +240,7 @@ app.post('/api/ordenes', (req, res) => {
   
   try {
     // Insertar pedido
-    connection.query(`
+    db.query(`
       INSERT INTO pedidos (session_id, codigo, nombre, email, telefono, direccion, ciudad, notas, subtotal, impuestos, total) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [session_id, codigo, nombre, email, telefono, direccion, ciudad, notas, subtotal, impuestos, total], 
@@ -257,7 +257,7 @@ app.post('/api/ordenes', (req, res) => {
       const itemsPromises = items.map(item => {
         return new Promise((resolve, reject) => {
           console.log('🔍 Insertando item:', item);
-          connection.query(`
+          db.query(`
             INSERT INTO pedido_items (pedido_id, producto_id, titulo, titulo_snapshot, precio_unit, cantidad, subtotal) 
             VALUES (?, ?, ?, ?, ?, ?, ?)
           `, [pedidoId, item.producto_id, item.nombre, item.nombre, item.precio_unit, item.cantidad, item.precio_unit * item.cantidad], 
@@ -279,13 +279,13 @@ app.post('/api/ordenes', (req, res) => {
           const stockPromises = items.map(item => {
             return new Promise((resolve, reject) => {
               // 1. Actualizar stock en productos
-              connection.query(`UPDATE productos SET stock = stock - ? WHERE id = ?`, 
+              db.query(`UPDATE productos SET stock = stock - ? WHERE id = ?`, 
                 [item.cantidad, item.producto_id], (error) => {
                 if (error) {
                   reject(error);
                 } else {
                   // 2. Registrar en inventario_movimientos
-                  connection.query(`
+                  db.query(`
                     INSERT INTO inventario_movimientos (producto_id, tipo, cantidad, referencia, notas)
                     VALUES (?, 'salida', ?, ?, ?)
                   `, [item.producto_id, -item.cantidad, codigo, `Venta pedido ${codigo}`], (error) => {
@@ -305,7 +305,7 @@ app.post('/api/ordenes', (req, res) => {
         .then(() => {
           console.log('✅ Todos los stocks actualizados');
           // Limpiar carrito después de crear pedido
-          connection.query('DELETE FROM carrito_items WHERE session_id = ?', [session_id], (error) => {
+          db.query('DELETE FROM carrito_items WHERE session_id = ?', [session_id], (error) => {
             if (error) {
               console.error('❌ ERROR limpiando carrito:', error);
               // No fallar la respuesta principal si falla limpiar el carrito
@@ -341,7 +341,7 @@ app.delete('/api/carrito/limpiar', (req, res) => {
     return res.status(400).json({ error: 'Session ID requerido' });
   }
   
-  connection.query(`DELETE FROM carrito_items WHERE session_id = ?`, [session_id], (error, results) => {
+  db.query(`DELETE FROM carrito_items WHERE session_id = ?`, [session_id], (error, results) => {
     if (error) {
       console.error('Error limpiando carrito:', error);
       return res.status(500).json({ error: 'Error limpiando carrito' });
@@ -365,7 +365,7 @@ app.delete('/api/carrito/limpiar', (req, res) => {
     return res.status(400).json({ error: 'Session ID requerido' });
   }
   
-  connection.query(`DELETE FROM carrito_items WHERE session_id = ?`, [session_id], (error, results) => {
+  db.query(`DELETE FROM carrito_items WHERE session_id = ?`, [session_id], (error, results) => {
     if (error) {
       console.error('Error limpiando carrito:', error);
       return res.status(500).json({ error: 'Error limpiando carrito' });
