@@ -36,11 +36,11 @@
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ],
             "outputMode": "static",
-            
             "outputPath": "dist/landing-angular",
             "index": "src/index.html",
             "baseHref": "/landing-angular/",
-            "deployUrl": "/landing-angular/"
+            "deployUrl": "/landing-angular/",
+            "outputHashing": "all" 
           },
           "configurations": {
             "production": {
