@@ -8,15 +8,16 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'usuariosdb'
+const db = mysql.createConnection({
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT
 });
 
-// Conectar a la base de datos
-connection.connect((err) => {
+// ✅ Conectar a la base
+db.connect((err) => {
   if (err) {
     console.error('Error conectando a la BD:', err);
     return;
@@ -26,7 +27,7 @@ connection.connect((err) => {
 
 // GET productos
 app.get('/api/productos', (req, res) => {
-  connection.query(`
+  db.query(`
     SELECT id, titulo as nombre, precio, imagen_url as imagen, 
            categoria, stock, descripcion, modelo_3d_url
     FROM productos 
